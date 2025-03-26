@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api")
 public class AssetController {
 
     private final AssetService assetService;
@@ -13,11 +13,10 @@ public class AssetController {
     	this.assetService = assetService;
     }
 
-    @GetMapping("/evaluation")
-    public ResponseEntity<String> getAccountEvaluation() { //@RequestHeader("Authorization") String token
+    @GetMapping("/assets")
+    public ResponseEntity<?> getAccountEvaluation() { //@RequestHeader("Authorization") String token
     	String accessToken = assetService.getAccessToken();
-    	System.out.println("🔹 토큰 응답 JSON: " + accessToken);
-        String response = assetService.getAccountEvaluation(accessToken); //.replace("Bearer ", "")
+    	AccountEvaluationResponseDTO  response = assetService.getAccountEvaluation(accessToken); //.replace("Bearer ", "")
         return ResponseEntity.ok(response);
     }
 }

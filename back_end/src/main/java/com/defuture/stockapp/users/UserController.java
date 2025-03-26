@@ -30,15 +30,15 @@ public class UserController {
         return ResponseEntity.ok(savedUser);  // JSON 형식으로 응답
     }
 	
-	@GetMapping("/exists/{userId}")
-	public ResponseEntity<Boolean> checkUserExists(@PathVariable("userId") String userId){
-		boolean exists = userService.userExists(userId);
+	@GetMapping("/exists/{username}")
+	public ResponseEntity<Boolean> checkUserExists(@PathVariable("username") String username){
+		boolean exists = userService.userExists(username);
 		return ResponseEntity.ok(exists);
 	}
 	
-	@GetMapping("/{userId}")
-    public ResponseEntity<?> getUser(@PathVariable("userId") String userId) {
-        UserAccount user = userService.findByUsername(userId);
+	@GetMapping("/{username}")
+    public ResponseEntity<?> getUser(@PathVariable("username") String username) {
+        UserAccount user = userService.findByUsername(username);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 ID입니다.");
         }

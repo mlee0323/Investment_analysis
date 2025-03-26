@@ -17,10 +17,10 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
 	@Autowired
-    private MyUserDetailsService userDetailsService; // 사용자 상세 정보를 조회하는 서비스
+    private MyUserDetailsService userDetailsService;
 
     @Autowired
-    private JwtUtil jwtUtil; // JWT 관련 유틸리티
+    private JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -50,7 +50,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        // 필터 체인 계속 진행
         chain.doFilter(request, response);
     }
 }
