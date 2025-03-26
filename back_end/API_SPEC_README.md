@@ -15,9 +15,9 @@
 #### 📦 요청 Body
 ```json
 {
-  "userId": "jun123",
-  "password": "securePassword!",
-  "name": "준이",
+  "username": "JunOh",
+  "password": "testPassword!",
+  "name": "준오",
   "email": "jun@example.com"
 }
 ```
@@ -25,7 +25,10 @@
 #### 📤 응답 예시
 ```json
 {
-  "message": "회원가입이 완료되었습니다"
+    "username": "JunOh123",
+    "name": "JunOh",
+    "email": "jun123@example.com",
+    "password": "$2a$10$bVbj3xl039e3dJJ4Si.90eL.4U6GZy372TbrRKkXw78hJmPx3Y27G"
 }
 ```
 
@@ -36,14 +39,12 @@
 
 ### 2. 🔍 아이디 중복 확인
 - **Method:** `GET`
-- **URL:** `/api/users/exists/{userId}`
+- **URL:** `/api/users/exists/{username}`
 - **설명:** 사용자 ID가 이미 존재하는지 확인
 
 #### 📤 응답 예시
-```json
-{
-  "exists": true
-}
+```boolean
+true
 ```
 
 #### 🔓 인증 필요 여부
@@ -51,7 +52,27 @@
 
 ---
 
-### 3. 🔐 로그인
+### 3. 🙋 아이디 존재 확인
+- **Method:** `GET`
+- **URL:** `/api/users/{username}`
+- **설명:** 사용자 ID가 이미 존재하는지 확인
+
+#### 📤 응답 예시
+```json
+{
+    "username": "JunOh123",
+    "name": "JunOh",
+    "email": "jun123@example.com",
+    "password": "$2a$10$bVbj3xl039e3dJJ4Si.90eL.4U6GZy372TbrRKkXw78hJmPx3Y27G"
+}
+```
+
+#### 🔒 인증 필요 여부
+> ❌ 인증 불필요 (`permitAll()`)
+
+---
+
+### 4. 🔐 로그인
 - **Method:** `POST`
 - **URL:** `/api/users/login`
 - **설명:** 사용자 로그인, JWT 토큰 발급
@@ -59,7 +80,7 @@
 #### 📦 요청 Body
 ```json
 {
-  "userId": "jun123",
+  "username": "jun123",
   "password": "securePassword!"
 }
 ```
@@ -76,36 +97,10 @@
 
 ---
 
-## 👤 사용자 API
-
-### 4. 🙋 내 정보 조회
-- **Method:** `GET`
-- **URL:** `/api/users/{userId}`
-- **설명:** 로그인한 사용자의 정보 반환
-
-#### 📥 요청 헤더
-```
-Authorization: Bearer {JWT_TOKEN}
-```
-
-#### 📤 응답 예시
-```json
-{
-  "userId": "jun123",
-  "name": "준이",
-  "email": "jun@example.com"
-}
-```
-
-#### 🔒 인증 필요 여부
-> ✅ 인증 필요 (JWT)
-
----
-
 ## 💼 자산 관련 API
 
 ### 5. 💰 자산 평가 정보 조회
-- **Method:** `GET` or `POST`
+- **Method:** `GET`
 - **URL:** `/api/assets`
 - **설명:** 키움 API를 이용한 자산 평가 정보 조회
 
@@ -117,14 +112,22 @@ Authorization: Bearer {JWT_TOKEN}
 #### 📤 응답 예시
 ```json
 {
-  "totalAsset": 1340000,
-  "items": [
+  "d2EntBalance": "000051842599",
+  "totalEstimate": "000417180200",
+  "totalPurchase": "000416117111",
+  "profitLoss": "000000000000",
+  "profitLossRate": "0.00",
+  "stocks": [
     {
-      "stockCode": "005930",
-      "stockName": "삼성전자",
-      "quantity": 10,
-      "currentPrice": 67000
-    }
+      "name": "메리츠금융지주",
+      "quantity": "000000000900",
+      "avgPrice": "000000118234",
+      "currentPrice": "000000119600",
+      "evalAmount": "000106729370",
+      "plAmount": "000000318870",
+      "plRate": "0.2997"
+    },
+    ...
   ]
 }
 ```
@@ -144,5 +147,5 @@ Authorization: Bearer {JWT_TOKEN}
 
 ---
 
-🛠 작성일: 2025.03  
-👨‍💻 담당자: 백엔드 개발 - 너
+🛠 작성일: 2025.03.26  
+👨‍💻 담당자: 백엔드 개발 - 박준오
