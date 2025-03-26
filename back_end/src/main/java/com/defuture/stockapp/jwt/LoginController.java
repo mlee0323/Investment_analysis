@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     @Autowired
-    private AuthenticationManager authenticationManager; // 인증을 위한 매니저
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    private MyUserDetailsService userDetailsService; // 사용자 상세 정보 서비스
+    private MyUserDetailsService userDetailsService;
 
     @Autowired
     private JwtUtil jwtUtil; // JWT 유틸리티
@@ -28,7 +28,6 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequestDTO authenticationRequestDTO) throws Exception {
         try {
-            // 사용자 인증 (아이디, 비밀번호 검증)
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                 		authenticationRequestDTO.getUsername(), 
@@ -36,7 +35,6 @@ public class LoginController {
                 )
             );
         } catch (BadCredentialsException e) {
-            // 인증 실패 시 예외 발생
             throw new Exception("아이디나 비밀번호가 올바르지 않습니다.", e);
         }
 

@@ -17,15 +17,12 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // JWT 서명에 사용할 비밀 키 (안전하게 보관할 것)
     private Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    // 토큰에서 사용자 이름(Subject)을 추출하는 메소드
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // 토큰의 만료 시간을 추출하는 메소드
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
