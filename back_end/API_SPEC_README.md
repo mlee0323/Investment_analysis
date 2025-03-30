@@ -97,9 +97,47 @@ true
 
 ---
 
+### 5. 📥 투자성향 분석
+- **Method:** `POST`
+- **URL:** `/api/users/profile`
+- **설명:** 로그인한 사용자의 투자성향 테스트 결과(응답 정보)를 기반으로, 투자 점수를 계산하고 투자 유형을 결정하여 사용자 계정을 업데이트한 후, 투자성향 반환
+
+#### 📦 요청 Body
+> 로그인된 사용자의 정보는 SecurityContext에서 가져오므로, 요청 Body에는 투자 테스트 응답(response) 데이터만 포함합니다.
+  
+```json
+{
+  "responses": [
+    { "questionId": 1, "selectedOption": 1 },
+    { "questionId": 2, "selectedOption": 1 },
+    { "questionId": 3, "selectedOption": 1 },
+    { "questionId": 4, "selectedOption": 1 },
+    { "questionId": 5, "selectedOption": 1 },
+    { "questionId": 6, "selectedOption": 1 },
+    { "questionId": 7, "selectedOption": 1 }
+  ]
+}
+```
+
+#### 📤 응답 예시
+> 프론트엔드에는 민감한 정보(비밀번호, 이메일 등)를 제외한 투자 결과만 전달됩니다.
+  
+```json
+{
+  "username": "jun123",
+  "totalScore": 52.9,
+  "investmentType": "위험중립형"
+}
+```
+
+#### 🔓 인증 필요 여부
+> ✔️ 인증 필요 (JWT Token을 통한 인증 필요)
+
+---
+
 ## 💼 자산 관련 API
 
-### 5. 💰 자산 평가 정보 조회
+### 6. 💰 자산 평가 정보 조회
 - **Method:** `GET`
 - **URL:** `/api/assets`
 - **설명:** 키움 API를 이용한 자산 평가 정보 조회
