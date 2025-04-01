@@ -19,34 +19,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
-    
- // AuthenticationManager 설정: 사용자 정보와 암호 인코더를 등록
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-	
+	@Autowired
+	private JwtRequestFilter jwtRequestFilter;
+
+	// AuthenticationManager 설정: 사용자 정보와 암호 인코더를 등록
 	@Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-        	.csrf(csrf -> csrf.disable())
-        	.authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/api/users/login", "/api/users/register", "/api/users/exists/{userId}", "/api/users/{userId}", "/api/account/evaluation").permitAll()
-                    .anyRequest().authenticated()
-                )
-                // 세션 관리를 stateless로 설정
-                .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        
-        return http.build();
-    }
-	
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+			throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
+
 	@Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers("/api/users/login", "/api/users/register", "/api/users/exists/{userId}",
+								"/api/users/{userId}", "/api/account/evaluation")
+						.permitAll().anyRequest().authenticated())
+				// 세션 관리를 stateless로 설정
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
+
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }
