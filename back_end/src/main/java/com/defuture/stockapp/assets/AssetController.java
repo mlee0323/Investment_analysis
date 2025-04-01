@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class AssetController {
 
-    private final AssetService assetService;
+	private final AssetService assetService;
 
-    public AssetController(AssetService assetService) {
-    	this.assetService = assetService;
-    }
+	public AssetController(AssetService assetService) {
+		this.assetService = assetService;
+	}
 
-    @GetMapping("/assets")
-    public ResponseEntity<?> getAccountEvaluation() { //@RequestHeader("Authorization") String token
-    	String accessToken = assetService.getAccessToken();
-    	AccountEvaluationResponseDTO  response = assetService.getAccountEvaluation(accessToken); //.replace("Bearer ", "")
-        return ResponseEntity.ok(response);
-    }
+	@GetMapping("/assets")
+	public ResponseEntity<?> getAccountEvaluation() { // @RequestHeader("Authorization") String token
+		String accessToken = assetService.getAccessToken();
+		AccountEvaluationResponseDTO response = assetService.getAccountEvaluation(accessToken);
+
+		return ResponseEntity.ok(response);
+	}
 }
-
