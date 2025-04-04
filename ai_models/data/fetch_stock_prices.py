@@ -136,10 +136,10 @@ def fetch_stock_prices():
     print(f"📆 조회 기간: {begin_date} ~ {end_date}")
     
     try:
-        kospi200_df = pd.read_csv('kospi200_items.csv')
+        kospi200_df = pd.read_csv('kospi200_and_related.csv')
         kospi200_df['종목코드'] = kospi200_df['종목코드'].astype(str).str.replace('A', '', regex=False)
     except Exception as e:
-        print(f"KOSPI200 종목 리스트 파일을 읽을 수 없습니다: {e}")
+        print(f"KOSPI 종목 리스트 파일을 읽을 수 없습니다: {e}")
         return None
     
     # 종목별 데이터를 담을 리스트
