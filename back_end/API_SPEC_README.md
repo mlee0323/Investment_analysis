@@ -150,20 +150,20 @@ Authorization: Bearer {JWT_TOKEN}
 #### 📤 응답 예시
 ```json
 {
-  "d2EntBalance": "000051842599",
-  "totalEstimate": "000417180200",
-  "totalPurchase": "000416117111",
-  "profitLoss": "000000000000",
-  "profitLossRate": "0.00",
-  "stocks": [
+  "d2EntBalance": "000051842599",       // D+2 추정예수금 (d2_entra)
+  "totalEstimate": "000417180200",      // 유가잔고 평가금액 (tot_est_amt)
+  "totalPurchase": "000416117111",      // 총매입금액 (tot_pur_amt)
+  "profitLoss": "000000000000",         // 누적 투자손익 (lspft)
+  "profitLossRate": "0.00",             // 누적 손익률 (%) (lspft_rt)
+  "stocks": [                           // 종목별 계좌평가 현황
     {
-      "name": "메리츠금융지주",
-      "quantity": "000000000900",
-      "avgPrice": "000000118234",
-      "currentPrice": "000000119600",
-      "evalAmount": "000106729370",
-      "plAmount": "000000318870",
-      "plRate": "0.2997"
+      "name": "메리츠금융지주",          // 종목명 (stk_nm)
+      "quantity": "000000000900",        // 보유수량 (rmnd_qty)
+      "avgPrice": "000000118234",        // 평균단가 (avg_prc)
+      "currentPrice": "000000119600",    // 현재가 (cur_prc)
+      "evalAmount": "000106729370",      // 평가금액 (evlt_amt)
+      "plAmount": "000000318870",        // 손익금액 (pl_amt)
+      "plRate": "0.2997"                 // 손익률 (pl_rt)
     },
     ...
   ]
