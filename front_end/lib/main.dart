@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/provider/user_provider.dart';
 import 'package:front_end/screens/auth/login_screen.dart';
-import 'package:front_end/screens/auth/signin_screen.dart';
+import 'package:front_end/screens/auth/signup_screen.dart';
 import 'package:front_end/screens/market_screen.dart';
 import 'package:front_end/screens/portfolio_screen.dart';
 import 'package:front_end/screens/setting_screen.dart';
@@ -26,6 +26,28 @@ class MyApp extends StatelessWidget {
       title: 'Investment Analysis',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        scaffoldBackgroundColor: Color(0xFFF7F7F8),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          focusColor: Colors.white,
+          hoverColor: Colors.white,
+          hintStyle: TextStyle(color: Color(0xFF91929F)),
+          labelStyle: TextStyle(color: Color(0xFF91929F)),
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xff3578FF)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffFF6B6B)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          errorStyle: TextStyle(color: Color(0xff0FF6B6B)),
+        ),
       ),
       debugShowCheckedModeBanner: false,
       initialRoute: "/",
@@ -40,7 +62,7 @@ class MyApp extends StatelessWidget {
           case '/signin':
             return PageRouteBuilder(
               pageBuilder:
-                  (context, animation, secondaryAnimation) => SigninScreen(),
+                  (context, animation, secondaryAnimation) => SignupScreen(),
               transitionDuration: Duration(seconds: 0),
             );
           case '/login':
