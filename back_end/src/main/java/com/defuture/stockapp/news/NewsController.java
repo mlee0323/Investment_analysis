@@ -13,8 +13,8 @@ public class NewsController {
     }
 	
 	@GetMapping("/news")
-    public ResponseEntity<?> searchBlog(@RequestParam("query") String query) {
-        String result = newsService.searchNews(query);
+    public ResponseEntity<?> searchNews(@RequestParam("query") String query) {
+        NewsResponseDTO result = newsService.searchNews(query);
         return ResponseEntity.ok(result);
     }
 }
