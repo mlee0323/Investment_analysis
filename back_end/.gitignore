@@ -40,3 +40,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Gradle Wrapper 예외 처리
+!gradle/wrapper/gradle-wrapper.jar
