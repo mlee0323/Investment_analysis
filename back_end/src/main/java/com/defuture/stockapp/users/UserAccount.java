@@ -3,7 +3,9 @@ package com.defuture.stockapp.users;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.Id;
+//import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
+
 import lombok.Getter;
 import lombok.Setter;
 
