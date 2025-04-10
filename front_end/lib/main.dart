@@ -2,10 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:front_end/provider/user_provider.dart';
 import 'package:front_end/screens/auth/login_screen.dart';
 import 'package:front_end/screens/auth/signup_screen.dart';
+import 'package:front_end/screens/home/latest/latest_list_screen.dart';
+import 'package:front_end/screens/home/latest/latest_screen.dart';
+import 'package:front_end/screens/home/news_test_data.dart';
+import 'package:front_end/screens/home/recommend/recommend_list_screen.dart';
+import 'package:front_end/screens/home/recommend/recommended_screen.dart';
+import 'package:front_end/screens/loadmydata/load_data_screen.dart';
+import 'package:front_end/screens/loadmydata/mydata_screen.dart';
 import 'package:front_end/screens/market_screen.dart';
 import 'package:front_end/screens/portfolio_screen.dart';
 import 'package:front_end/screens/setting_screen.dart';
-import 'screens/home_screen.dart';
+import 'package:front_end/screens/survey/result_screen.dart';
+import 'package:front_end/screens/survey/survey_screen.dart';
+import 'package:front_end/screens/survey/survey_start_screen.dart';
+import 'screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -25,7 +35,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Investment Analysis',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         scaffoldBackgroundColor: Color(0xFFF7F7F8),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -49,7 +58,9 @@ class MyApp extends StatelessWidget {
           errorStyle: TextStyle(color: Color(0xff0FF6B6B)),
         ),
       ),
+
       debugShowCheckedModeBanner: false,
+
       initialRoute: "/",
       onGenerateRoute: (settings) {
         switch (settings.name) {
@@ -89,7 +100,65 @@ class MyApp extends StatelessWidget {
                   (context, animation, secondaryAnimation) => SettingScreen(),
               transitionDuration: Duration(seconds: 0),
             );
+          case '/survey':
+            return PageRouteBuilder(
+              pageBuilder:
+                  (context, animation, secondaryAnimation) =>
+                      SurveyStartScreen(),
+              transitionDuration: Duration(seconds: 0),
+            );
+          case '/result':
+            final args = settings.arguments as double;
+            return PageRouteBuilder(
+              pageBuilder:
+                  (context, animation, secondaryAnimation) =>
+                      ResultScreen(score: args),
+              transitionDuration: Duration(seconds: 0),
+            );
+          case '/mydata':
+            return PageRouteBuilder(
+              pageBuilder:
+                  (context, animation, secondaryAnimation) => MydataScreen(),
+              transitionDuration: Duration(seconds: 0),
+            );
+          case '/loaddata':
+            return PageRouteBuilder(
+              pageBuilder:
+                  (context, animation, secondaryAnimation) => LoadDataScreen(),
+              transitionDuration: Duration(seconds: 0),
+            );
+          case '/latest_list':
+            return PageRouteBuilder(
+              pageBuilder:
+                  (context, animation, secondaryAnimation) =>
+                      LatestListScreen(),
+              transitionDuration: Duration(seconds: 0),
+            );
+          case '/recommend_list':
+            return PageRouteBuilder(
+              pageBuilder:
+                  (context, animation, secondaryAnimation) =>
+                      RecommendListScreen(),
+              transitionDuration: Duration(seconds: 0),
+            );
+          case '/recommend':
+            return PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                final args = settings.arguments;
+                return RecommendScreen(news: args as News);
+              },
+              transitionDuration: Duration(seconds: 0),
+            );
+          case '/latest':
+            return PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                final args = settings.arguments;
+                return LatestScreen(news: args as News);
+              },
+              transitionDuration: Duration(seconds: 0),
+            );
         }
+        return null;
       },
     );
   }

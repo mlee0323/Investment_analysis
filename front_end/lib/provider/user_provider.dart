@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -5,7 +6,7 @@ import 'package:front_end/userInfo/users.dart';
 
 class UserProvider extends ChangeNotifier {
   late User _userInfo;
-  bool _loginStat = false;
+  bool _loginStat = true;
   //  bool _loginStat = true; //테스트
 
   User get userInfo => _userInfo;
@@ -24,11 +25,15 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> login(String username, String password) async {
     _loginStat = false;
-    const url = 'http://118.176.174.169:8080/api/users/login';
+    const url = 'http://10.0.2.2:8080/api/users/login';
     final data = {'username': username, 'password': password};
 
     try {
-      final response = await _dio.post(url, data: data);
+      final response = await _dio.post(
+        url,
+        data: jsonEncode(data),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
 
       if (response.statusCode == 200) {
         print("로그인 성공");
@@ -63,7 +68,7 @@ class UserProvider extends ChangeNotifier {
     String name,
     String email,
   ) async {
-    const url = 'http://118.176.174.169:8080/api/users/register';
+    const url = 'http://10.0.2.2:8080/api/users/register';
     final data = {
       'username': username,
       'password': password,
@@ -72,7 +77,11 @@ class UserProvider extends ChangeNotifier {
     };
 
     try {
-      final response = await _dio.post(url, data: data);
+      final response = await _dio.post(
+        url,
+        data: jsonEncode(data),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
 
       if (response.statusCode == 200) {
         print('회원가입 성공: ${response.data['username']}');
@@ -85,7 +94,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<bool> checkUsernameExists(String username) async {
-    final url = 'http://118.176.174.169:8080/api/users/exists/$username';
+    final url = 'http://10.0.2.2:8080/api/users/exists/$username';
 
     try {
       final response = await _dio.get(url);
@@ -102,7 +111,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<User> getUserByUsername(String username) async {
-    final url = 'http://118.176.174.169:8080/api/users/$username';
+    final url = 'http://10.0.2.2:8080/api/users/$username';
 
     try {
       final response = await _dio.get(url);

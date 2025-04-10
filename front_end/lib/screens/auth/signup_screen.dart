@@ -39,331 +39,309 @@ class _SigninpageState extends State<SignupScreen> {
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: Padding(
                 padding: const EdgeInsets.all(40),
-                child: Center(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Center(
-                          child: Image(
-                            image: AssetImage('images/logo.png'),
-                            height: 35,
+
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: Image(
+                          image: AssetImage('images/logo.png'),
+                          height: 35,
+                        ),
+                      ),
+
+                      const SizedBox(height: 40),
+                      Center(
+                        child: Container(
+                          constraints: BoxConstraints(maxWidth: 450),
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _nameController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '이름을 입력해주세요.';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  labelText: '이름',
+                                  hintText: '이름',
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
+                                  suffixIcon:
+                                      _nameController.text.isNotEmpty
+                                          ? IconButton(
+                                            icon: Icon(Icons.cancel),
+                                            color: const Color(0xffA6A6A6),
+                                            onPressed: () {
+                                              setState(() {
+                                                _nameController.clear();
+                                              });
+                                            },
+                                          )
+                                          : null,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  helperText: ' ',
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _name = value;
+                                  });
+                                },
+                              ),
+
+                              TextFormField(
+                                controller: _usernameController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '아이디를 입력해주세요.';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  labelText: '아이디',
+                                  hintText: '아이디',
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
+                                  suffixIcon:
+                                      _usernameController.text.isNotEmpty
+                                          ? IconButton(
+                                            icon: Icon(Icons.cancel),
+                                            color: const Color(0xffA6A6A6),
+                                            onPressed: () {
+                                              setState(() {
+                                                _usernameController.clear();
+                                              });
+                                            },
+                                          )
+                                          : null,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  helperText: ' ',
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _username = value;
+                                  });
+                                },
+                              ),
+
+                              TextFormField(
+                                controller: _passwordController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '비밀번호를 입력해주세요.';
+                                  }
+                                  if (value.length < 6 || value.length > 15) {
+                                    return '비밀번호는 6~15글자 이내로 입력해 주세요.';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  labelText: '비밀번호',
+                                  hintText: '비밀번호',
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
+                                  suffixIcon:
+                                      _passwordController.text.isNotEmpty
+                                          ? Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                  _isPasswordVisible
+                                                      ? Icons.visibility_off
+                                                      : Icons.visibility,
+                                                ),
+                                                color: const Color(0xff6C6C6C),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _isPasswordVisible =
+                                                        !_isPasswordVisible;
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.cancel),
+                                                color: const Color(0xffA6A6A6),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _passwordController.clear();
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          )
+                                          : null,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  helperText: ' ',
+                                ),
+                                obscureText: !_isPasswordVisible,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _password = value;
+                                  });
+                                },
+                              ),
+
+                              TextFormField(
+                                controller: _confirmPasswordController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '비밀번호를 확인해주세요.';
+                                  }
+                                  if (value != _password) {
+                                    return '비밀번호가 일치하지 않습니다.';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  labelText: '비밀번호 확인',
+                                  hintText: '비밀번호 확인',
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
+                                  suffixIcon:
+                                      _confirmPasswordController.text.isNotEmpty
+                                          ? Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                  _isConfirmPasswordVisible
+                                                      ? Icons.visibility_off
+                                                      : Icons.visibility,
+                                                ),
+                                                color: const Color(0xff6C6C6C),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _isConfirmPasswordVisible =
+                                                        !_isConfirmPasswordVisible;
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.cancel),
+                                                color: const Color(0xffA6A6A6),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _confirmPasswordController
+                                                        .clear();
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          )
+                                          : null,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  helperText: ' ',
+                                ),
+                                obscureText: !_isConfirmPasswordVisible,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _confirmPassword = value;
+                                  });
+                                },
+                              ),
+
+                              TextFormField(
+                                controller: _emailController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '이메일을 입력해주세요.';
+                                  }
+                                  bool emailValid = RegExp(
+                                    r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+$",
+                                  ).hasMatch(value);
+                                  if (!emailValid) {
+                                    return '이메일 형식에 맞춰 작성해 주세요.';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  labelText: '이메일',
+                                  hintText: '이메일',
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
+                                  suffixIcon:
+                                      _emailController.text.isNotEmpty
+                                          ? IconButton(
+                                            icon: Icon(Icons.cancel),
+                                            color: const Color(0xffA6A6A6),
+                                            onPressed: () {
+                                              setState(() {
+                                                _emailController.clear();
+                                              });
+                                            },
+                                          )
+                                          : null,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  helperText: ' ',
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _email = value;
+                                  });
+                                },
+                              ),
+                            ],
                           ),
                         ),
+                      ),
 
-                        const SizedBox(height: 40),
-                        Center(
-                          child: Container(
-                            constraints: BoxConstraints(maxWidth: 450),
-                            child: Column(
-                              children: [
-                                TextFormField(
-                                  controller: _nameController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return '이름을 입력해주세요.';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: '이름',
-                                    hintText: '이름',
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.never,
-                                    suffixIcon:
-                                        _nameController.text.isNotEmpty
-                                            ? IconButton(
-                                              icon: Icon(Icons.cancel),
-                                              color: const Color(0xffA6A6A6),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _nameController.clear();
-                                                });
-                                              },
-                                            )
-                                            : null,
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    helperText: ' ',
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _name = value;
-                                    });
-                                  },
-                                ),
+                      const SizedBox(height: 16),
+                      Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 450),
+                          child: CustomButton(
+                            text: '회원가입',
+                            isFullWidth: true,
+                            onPressed: () async {
+                              if (!_formKey.currentState!.validate()) {
+                                return;
+                              }
 
-                                TextFormField(
-                                  controller: _usernameController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return '아이디를 입력해주세요.';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: '아이디',
-                                    hintText: '아이디',
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.never,
-                                    suffixIcon:
-                                        _usernameController.text.isNotEmpty
-                                            ? IconButton(
-                                              icon: Icon(Icons.cancel),
-                                              color: const Color(0xffA6A6A6),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _usernameController.clear();
-                                                });
-                                              },
-                                            )
-                                            : null,
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    helperText: ' ',
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _username = value;
-                                    });
-                                  },
-                                ),
-
-                                TextFormField(
-                                  controller: _passwordController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return '비밀번호를 입력해주세요.';
-                                    }
-                                    if (value.length < 6 || value.length > 15) {
-                                      return '비밀번호는 6~15글자 이내로 입력해 주세요.';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: '비밀번호',
-                                    hintText: '비밀번호',
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.never,
-                                    suffixIcon:
-                                        _passwordController.text.isNotEmpty
-                                            ? Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IconButton(
-                                                  icon: Icon(
-                                                    _isPasswordVisible
-                                                        ? Icons.visibility_off
-                                                        : Icons.visibility,
-                                                  ),
-                                                  color: const Color(
-                                                    0xff6C6C6C,
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _isPasswordVisible =
-                                                          !_isPasswordVisible;
-                                                    });
-                                                  },
-                                                ),
-                                                IconButton(
-                                                  icon: Icon(Icons.cancel),
-                                                  color: const Color(
-                                                    0xffA6A6A6,
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _passwordController
-                                                          .clear();
-                                                    });
-                                                  },
-                                                ),
-                                              ],
-                                            )
-                                            : null,
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    helperText: ' ',
-                                  ),
-                                  obscureText: !_isPasswordVisible,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _password = value;
-                                    });
-                                  },
-                                ),
-
-                                TextFormField(
-                                  controller: _confirmPasswordController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return '비밀번호를 확인해주세요.';
-                                    }
-                                    if (value != _password) {
-                                      return '비밀번호가 일치하지 않습니다.';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: '비밀번호 확인',
-                                    hintText: '비밀번호 확인',
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.never,
-                                    suffixIcon:
-                                        _confirmPasswordController
-                                                .text
-                                                .isNotEmpty
-                                            ? Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IconButton(
-                                                  icon: Icon(
-                                                    _isConfirmPasswordVisible
-                                                        ? Icons.visibility_off
-                                                        : Icons.visibility,
-                                                  ),
-                                                  color: const Color(
-                                                    0xff6C6C6C,
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _isConfirmPasswordVisible =
-                                                          !_isConfirmPasswordVisible;
-                                                    });
-                                                  },
-                                                ),
-                                                IconButton(
-                                                  icon: Icon(Icons.cancel),
-                                                  color: const Color(
-                                                    0xffA6A6A6,
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _confirmPasswordController
-                                                          .clear();
-                                                    });
-                                                  },
-                                                ),
-                                              ],
-                                            )
-                                            : null,
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    helperText: ' ',
-                                  ),
-                                  obscureText: !_isConfirmPasswordVisible,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _confirmPassword = value;
-                                    });
-                                  },
-                                ),
-
-                                TextFormField(
-                                  controller: _emailController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return '이메일을 입력해주세요.';
-                                    }
-                                    bool emailValid = RegExp(
-                                      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+$",
-                                    ).hasMatch(value);
-                                    if (!emailValid) {
-                                      return '이메일 형식에 맞춰 작성해 주세요.';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: '이메일',
-                                    hintText: '이메일',
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.never,
-                                    suffixIcon:
-                                        _emailController.text.isNotEmpty
-                                            ? IconButton(
-                                              icon: Icon(Icons.cancel),
-                                              color: const Color(0xffA6A6A6),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _emailController.clear();
-                                                });
-                                              },
-                                            )
-                                            : null,
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    helperText: ' ',
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _email = value;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
+                              try {
+                                await context.read<UserProvider>().register(
+                                  _username!,
+                                  _password!,
+                                  _name!,
+                                  _email!,
+                                );
+                                Navigator.pushNamed(context, '/mydata');
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("회원가입 실패: $e")),
+                                );
+                              }
+                            },
                           ),
                         ),
+                      ),
 
-                        const SizedBox(height: 16),
-                        Center(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: 450),
-                            child: CustomButton(
-                              text: '회원가입',
-                              isFullWidth: true,
-                              onPressed: () async {
-                                if (!_formKey.currentState!.validate()) {
-                                  return;
-                                }
-
-                                try {
-                                  await context.read<UserProvider>().register(
-                                    _username!,
-                                    _password!,
-                                    _name!,
-                                    _email!,
-                                  );
-                                  Navigator.pushNamed(context, '/login');
-                                } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text("회원가입 실패: $e")),
-                                  );
-                                }
-                              },
-                            ),
-                          ),
+                      SizedBox(height: 12),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
+                        child: Text(
+                          '이미 계정이 있습니다.',
+                          style: TextStyle(color: Colors.grey),
                         ),
-
-                        SizedBox(height: 12),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/login');
-                          },
-                          child: Text(
-                            '이미 계정이 있습니다.',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
