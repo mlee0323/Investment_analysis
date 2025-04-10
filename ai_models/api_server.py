@@ -13,7 +13,7 @@ app = FastAPI()
 # 모델과 스케일러 로드
 try:
     # 모델 로드
-    model = tf.keras.models.load_model('/content/drive/MyDrive/stock_prediction_model.h5')
+    model = tf.keras.models.load_model('/content/drive/MyDrive/stock_prediction_model.keras')
     
     # 메타데이터 로드
     with open('/content/drive/MyDrive/model_metadata.json', 'r') as f:
