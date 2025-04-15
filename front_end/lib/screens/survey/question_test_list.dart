@@ -1,5 +1,6 @@
 List<Map<String, dynamic>> questionList = [
   {
+    'id': 1,
     'questionText': 'Q: 연령대를 선택해주세요.',
     'selectOption': 1,
     'answers': [
@@ -11,6 +12,7 @@ List<Map<String, dynamic>> questionList = [
     ],
   },
   {
+    'id': 2,
     'questionText': 'Q: 원하는 투자 기간을 선택해주세요. ',
     'selectOption': 1,
     'answers': [
@@ -22,6 +24,7 @@ List<Map<String, dynamic>> questionList = [
     ],
   },
   {
+    'id': 3,
     'questionText': ' Q: 다음 중 경험해본 투자 유형을 모두선택해주세요.',
     'selectOption': 5,
     'answers': [
@@ -33,6 +36,7 @@ List<Map<String, dynamic>> questionList = [
     ],
   },
   {
+    'id': 4,
     'questionText': 'Q: 금융 상품에 대한 본인의 지식 수준은 어느 정도인가요? ',
     'selectOption': 1,
     'answers': [
@@ -43,6 +47,7 @@ List<Map<String, dynamic>> questionList = [
     ],
   },
   {
+    'id': 5,
     'questionText': 'Q: 현재 투자 자금은 전체 금융자산에서 어느 정도 비중을 차지하나요?',
     'selectOption': 1,
     'answers': [
@@ -54,6 +59,7 @@ List<Map<String, dynamic>> questionList = [
     ],
   },
   {
+    'id': 6,
     'questionText': 'Q: 주요 수입원은 무엇인가요? ',
     'selectOption': 1,
     'answers': [
@@ -63,6 +69,7 @@ List<Map<String, dynamic>> questionList = [
     ],
   },
   {
+    'id': 7,
     'questionText': 'Q: 투자원금 손실 시 감수할 수 있는 손실 수준은 어느 정도인가요?  ',
     'selectOption': 1,
     'answers': [

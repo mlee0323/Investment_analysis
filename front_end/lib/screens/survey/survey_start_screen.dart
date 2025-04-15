@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/provider/user_provider.dart';
 import 'package:front_end/screens/survey/question_test_list.dart';
 import 'package:front_end/screens/survey/result_screen.dart';
 import 'package:front_end/screens/survey/survey_screen.dart';
 import 'package:front_end/widgets/custom_button.dart';
+import 'package:front_end/widgets/custom_header.dart';
+import 'package:provider/provider.dart';
 
 class SurveyStartScreen extends StatefulWidget {
   const SurveyStartScreen({super.key});
@@ -13,28 +16,42 @@ class SurveyStartScreen extends StatefulWidget {
 
 class _SurveyStartScreenState extends State<SurveyStartScreen> {
   int questionIndex = 0;
-  double totalScore = 0.0;
   bool isStarted = false;
 
-  List<List<double>> answerScores = List.generate(
-    questionList.length,
-    (_) => [],
-  );
+  List<Map<String, int>> selectedAnswers = [];
 
-  void nextPressed() {
+  void nextPressed() async {
     if (questionIndex < questionList.length - 1) {
       setState(() {
         questionIndex++;
       });
-    } else if (answerScores.every((element) => element.isNotEmpty)) {
-      double finalScore = 0.0;
-      for (var scores in answerScores) {
-        finalScore += scores.fold(0.0, (sum, s) => sum + s);
-      }
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => ResultScreen(score: finalScore)),
+    } else if (selectedAnswers.length == questionList.length) {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final result = await userProvider.analyzeInvestmentProfile(
+        selectedAnswers,
       );
+
+      if (result != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ResultScreen(result: result)),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder:
+              (_) => AlertDialog(
+                title: const Text('분석 실패'),
+                content: const Text('투자 성향 분석에 실패했습니다.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('확인'),
+                  ),
+                ],
+              ),
+        );
+      }
     }
   }
 
@@ -46,9 +63,24 @@ class _SurveyStartScreenState extends State<SurveyStartScreen> {
     }
   }
 
-  void answerSelected(List<double> scores) {
+  void answerSelected(List<Map<String, int>> answers) {
     setState(() {
-      answerScores[questionIndex] = scores;
+      for (var answer in answers) {
+        int questionId = answer['questionId']!;
+        int selectedOption = answer['selectedOption']!;
+
+        int existingIndex = selectedAnswers.indexWhere(
+          (element) => element['questionId'] == questionId,
+        );
+        if (existingIndex != -1) {
+          selectedAnswers[existingIndex]['selectedOption'] = selectedOption;
+        } else {
+          selectedAnswers.add({
+            'questionId': questionId,
+            'selectedOption': selectedOption,
+          });
+        }
+      }
     });
   }
 
@@ -56,18 +88,14 @@ class _SurveyStartScreenState extends State<SurveyStartScreen> {
     setState(() {
       isStarted = false;
       questionIndex = 0;
-      totalScore = 0.0;
-      answerScores = List.generate(questionList.length, (_) => []);
+      selectedAnswers.clear();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          isStarted
-              ? null
-              : AppBar(backgroundColor: Colors.white, elevation: 1),
+      appBar: isStarted ? null : const CustomHeader(showBackButton: true),
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xffF7F7F8),
       body:

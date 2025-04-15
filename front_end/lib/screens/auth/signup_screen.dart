@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/notifications/snackbar.dart';
 import 'package:front_end/provider/user_provider.dart';
 import 'package:front_end/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
@@ -313,6 +314,22 @@ class _SigninpageState extends State<SignupScreen> {
                                 return;
                               }
 
+                              final provider = Provider.of<UserProvider>(
+                                context,
+                                listen: false,
+                              );
+                              final isDuplicate = await provider
+                                  .checkUsernameExists(_username!);
+
+                              if (isDuplicate) {
+                                Snackbar(
+                                  text: "이미 존재하는 아이디입니다.",
+                                  icon: Icons.error,
+                                  backgroundColor: Colors.grey,
+                                ).showSnackbar(context);
+                                return;
+                              }
+
                               try {
                                 await context.read<UserProvider>().register(
                                   _username!,
@@ -320,7 +337,7 @@ class _SigninpageState extends State<SignupScreen> {
                                   _name!,
                                   _email!,
                                 );
-                                Navigator.pushNamed(context, '/mydata');
+                                Navigator.pushNamed(context, '/survey');
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text("회원가입 실패: $e")),

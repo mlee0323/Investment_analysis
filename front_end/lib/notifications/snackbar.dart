@@ -22,7 +22,7 @@ class Snackbar {
         backgroundColor: Colors.transparent,
         elevation: 0,
         behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.only(bottom: 80.0, left: 24.0, right: 24.0),
+        margin: const EdgeInsets.only(bottom: 20.0, left: 24.0, right: 24.0),
         content: Align(
           alignment: Alignment.center,
           child: Container(

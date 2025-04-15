@@ -15,6 +15,7 @@ import 'package:front_end/screens/setting_screen.dart';
 import 'package:front_end/screens/survey/result_screen.dart';
 import 'package:front_end/screens/survey/survey_screen.dart';
 import 'package:front_end/screens/survey/survey_start_screen.dart';
+import 'package:front_end/userInfo/Invest_information.dart';
 import 'screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -61,7 +62,7 @@ class MyApp extends StatelessWidget {
 
       debugShowCheckedModeBanner: false,
 
-      initialRoute: "/",
+      initialRoute: "/survey",
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
@@ -108,11 +109,11 @@ class MyApp extends StatelessWidget {
               transitionDuration: Duration(seconds: 0),
             );
           case '/result':
-            final args = settings.arguments as double;
+            final args = settings.arguments as InvestInformation;
             return PageRouteBuilder(
               pageBuilder:
                   (context, animation, secondaryAnimation) =>
-                      ResultScreen(score: args),
+                      ResultScreen(result: args),
               transitionDuration: Duration(seconds: 0),
             );
           case '/mydata':

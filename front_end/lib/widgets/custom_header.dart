@@ -5,6 +5,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
   final bool showLogo;
   final String? title;
   final bool showUserIcon;
+  final VoidCallback? onPressed;
 
   const CustomHeader({
     super.key,
@@ -12,6 +13,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
     this.showLogo = false,
     this.title,
     this.showUserIcon = false,
+    this.onPressed,
   });
 
   @override

@@ -167,12 +167,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         await userProvider.login(username, password);
 
                         if (userProvider.isLogin) {
-                          print('로그인 성공');
                           Navigator.pop(context);
                           Navigator.pushReplacementNamed(context, '/');
                         } else {
                           Snackbar(
-                            text: "로그인에 실패하였습니다.",
+                            text:
+                                userProvider.loginErrorMessage ??
+                                "로그인에 실패하였습니다.",
                             icon: Icons.error,
                             backgroundColor: Colors.grey,
                           ).showSnackbar(context);
