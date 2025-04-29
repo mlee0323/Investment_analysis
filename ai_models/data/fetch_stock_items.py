@@ -85,7 +85,7 @@ def fetch_stock_items():
             final_df = pd.concat([kospi200, related_companies])
             
             # 결과 저장
-            output_file = 'kospi200_and_related.csv'
+            output_file = 'ai_models/data/kospi200_and_related.csv'
             final_df.to_csv(output_file, index=False, encoding='utf-8-sig')
             print(f"\n✅ KOSPI 200 및 관련 기업 정보가 {output_file}에 저장되었습니다.")
             print(f"- KOSPI 200 종목 수: {len(kospi200)}개")

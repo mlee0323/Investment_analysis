@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/widgets/custom_bottom_navigation_bar.dart';
+import 'package:front_end/widgets/custom_header.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -12,7 +13,11 @@ class _PortfolioScreenState extends State<MarketScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("종목추천")),
+      appBar: const CustomHeader(
+        showLogo: true,
+        showUserIcon: true,
+        showBackButton: false,
+      ),
       body: Center(child: const Text("종목추천 화면")),
       bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 2),
     );

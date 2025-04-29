@@ -10,8 +10,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: Theme.of(context).primaryColor,
+      selectedItemColor: Colors.black,
       unselectedItemColor: Colors.grey,
+      backgroundColor: Colors.white,
       currentIndex: currentIndex,
       onTap: (index) {
         switch (index) {

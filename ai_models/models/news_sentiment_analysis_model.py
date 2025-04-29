@@ -6,7 +6,7 @@ import torch
 import numpy as np
 
 # 가장 최근의 뉴스 파일 찾기
-news_files = glob.glob('lg_news_api.xlsx')
+news_files = glob.glob('ai_models/data/lg_news_api.xlsx')
 if not news_files:
     raise FileNotFoundError("뉴스 파일을 찾을 수 없습니다. 파일명을 확인하세요.")
     
@@ -77,6 +77,6 @@ result_df = pd.DataFrame({
     'finbert_sentiment': news_df['finbert_sentiment']
 })
 
-output_file = 'lg_news_finbert_sentiment.xlsx'
+output_file = 'ai_models/data/lg_news_finbert_sentiment.xlsx'
 result_df.to_excel(output_file, index=False)
 print(f"감성 분석 결과가 {output_file}에 저장되었습니다.")
