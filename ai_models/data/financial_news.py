@@ -5,6 +5,27 @@ import xml.etree.ElementTree as ET
 import re
 from bs4 import BeautifulSoup
 import time
+from ai_models.database.db_config import execute_query, execute_values_query, execute_transaction
+
+def create_news_table():
+    """뉴스 데이터 테이블 생성"""
+    queries = [
+        ("""
+        CREATE TABLE IF NOT EXISTS financial_news (
+            id SERIAL PRIMARY KEY,
+            title TEXT NOT NULL,
+            link TEXT NOT NULL,
+            pub_date TIMESTAMPTZ NOT NULL,
+            source VARCHAR(20) NOT NULL,
+            company VARCHAR(50) NOT NULL,
+            created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        );
+        """, None),
+        ("CREATE INDEX IF NOT EXISTS idx_financial_news_date ON financial_news (pub_date DESC);", None),
+        ("CREATE INDEX IF NOT EXISTS idx_financial_news_company ON financial_news (company);", None)
+    ]
+    execute_transaction(queries)
+    print("Financial news table created successfully!")
 
 def parse_relative_date(relative_date):
     """상대적 날짜 문자열을 실제 날짜로 변환"""
@@ -58,10 +79,10 @@ def fetch_news_google(query, start_date, end_date):
                 pub_date = parse_relative_date(pub_date)
             
             news_items.append({
-                "Title": title,
-                "Link": link,
-                "Date": pub_date.strftime('%Y-%m-%d'),
-                "Source": "Google News"
+                "title": title,
+                "link": link,
+                "pub_date": pub_date,
+                "source": "Google News"
             })
         except Exception as e:
             print(f"Error processing Google news item: {e}")
@@ -122,13 +143,13 @@ def fetch_news_naver(query, start_date, end_date):
                             continue
                     
                     if date is None:
-                        date = today
+                        date = datetime.datetime.now()
                 
                 news_items.append({
-                    "Title": title,
-                    "Link": link,
-                    "Date": date.strftime('%Y-%m-%d'),
-                    "Source": "Naver News"
+                    "title": title,
+                    "link": link,
+                    "pub_date": date,
+                    "source": "Naver News"
                 })
             except Exception as e:
                 print(f"Error parsing date '{date_text}': {e}")
@@ -139,6 +160,37 @@ def fetch_news_naver(query, start_date, end_date):
             continue
     
     return news_items
+
+def save_news_to_db(news_items, company):
+    """뉴스 데이터를 데이터베이스에 저장"""
+    if not news_items:
+        print(f"No news items to save for {company}")
+        return
+    
+    # 데이터베이스에 저장할 데이터 준비
+    data = [(
+        item['title'],
+        item['link'],
+        item['pub_date'],
+        item['source'],
+        company
+    ) for item in news_items]
+    
+    # 트랜잭션으로 데이터 업데이트
+    queries = [
+        ("""
+        INSERT INTO financial_news (
+            title, link, pub_date, source, company
+        ) VALUES %s
+        ON CONFLICT (title, link) DO UPDATE SET
+            pub_date = EXCLUDED.pub_date,
+            source = EXCLUDED.source,
+            company = EXCLUDED.company
+        """, data)
+    ]
+    execute_transaction(queries)
+    
+    print(f"✅ {len(data)}개의 {company} 관련 뉴스가 데이터베이스에 저장되었습니다.")
 
 def fetch_news_lg():
     """LG 및 계열사 관련 뉴스 수집"""
@@ -160,7 +212,7 @@ def fetch_news_lg():
     print(f"Fetching news from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}...")
     
     # 모든 계열사의 뉴스 수집
-    all_news = []
+    total_news_count = 0
     for company in affiliates:
         print(f"\nFetching news for {company}...")
         query = base_query.format(company=company)
@@ -168,65 +220,59 @@ def fetch_news_lg():
         # Google News
         print("Fetching from Google News...")
         google_news = fetch_news_google(query, start_date, end_date)
-        for item in google_news:
-            item['Company'] = company
-        all_news.extend(google_news)
+        save_news_to_db(google_news, company)
+        total_news_count += len(google_news)
         
         # Naver News
         print("Fetching from Naver News...")
         naver_news = fetch_news_naver(query, start_date, end_date)
-        for item in naver_news:
-            item['Company'] = company
-        all_news.extend(naver_news)
+        save_news_to_db(naver_news, company)
+        total_news_count += len(naver_news)
         
         # API 호출 간격 조절
         time.sleep(1)
     
-    # 중복 제거
-    seen_titles = set()
-    unique_news = []
-    for item in all_news:
-        if item['Title'] not in seen_titles:
-            seen_titles.add(item['Title'])
-            unique_news.append(item)
-    
-    print(f"\nTotal {len(unique_news)}개의 뉴스 fetched.")
-    return unique_news
+    print(f"\nTotal {total_news_count}개의 뉴스가 수집되었습니다.")
+    return total_news_count
 
-def save_to_excel(news_items, filename="ai_models/data/lg_affiliates_news.xlsx"):
-    if not news_items:
-        print("No news items to save")
-        return
-        
-    df = pd.DataFrame(news_items)
-    
-    # 날짜 파싱 개선
+def save_to_excel(filename="ai_models/data/lg_affiliates_news.xlsx"):
+    """데이터베이스의 뉴스를 Excel 파일로 백업"""
     try:
-        df['Date'] = pd.to_datetime(df['Date'], format='%Y-%m-%d', errors='coerce')
-        # 파싱되지 않은 날짜를 오늘 날짜로 대체
-        df['Date'] = df['Date'].fillna(pd.Timestamp('today').normalize())
-    except Exception as e:
-        print(f"Error parsing dates: {e}")
-        df['Date'] = pd.Timestamp('today').normalize()
-    
-    # 날짜순 정렬
-    df = df.sort_values(['Company', 'Date'])
-    
-    # 중복 제거
-    df = df.drop_duplicates(subset=['Title'])
-    
-    # Excel 파일로 저장
-    with pd.ExcelWriter(filename) as writer:
-        # 전체 뉴스
-        df.to_excel(writer, sheet_name='All News', index=False)
+        # 데이터베이스에서 뉴스 데이터 가져오기
+        query = """
+        SELECT title, link, pub_date, source, company
+        FROM financial_news
+        ORDER BY company, pub_date DESC;
+        """
+        results = execute_query(query)
         
-        # 계열사별로 분리하여 저장
-        for company in df['Company'].unique():
-            company_news = df[df['Company'] == company]
-            company_news.to_excel(writer, sheet_name=company, index=False)
-    
-    print(f"{len(df)}개의 뉴스를 {filename}에 저장했습니다.")
+        if not results:
+            print("No news items to save")
+            return
+        
+        df = pd.DataFrame(results)
+        
+        # Excel 파일로 저장
+        with pd.ExcelWriter(filename) as writer:
+            # 전체 뉴스
+            df.to_excel(writer, sheet_name='All News', index=False)
+            
+            # 계열사별로 분리하여 저장
+            for company in df['company'].unique():
+                company_news = df[df['company'] == company]
+                company_news.to_excel(writer, sheet_name=company, index=False)
+        
+        print(f"{len(df)}개의 뉴스를 {filename}에 백업 저장했습니다.")
+        
+    except Exception as e:
+        print(f"Excel 파일 저장 중 오류 발생: {e}")
 
 if __name__ == "__main__":
-    news = fetch_news_lg()
-    save_to_excel(news)
+    print("📢 LG 계열사 뉴스 수집을 시작합니다...")
+    create_news_table()
+    total_news = fetch_news_lg()
+    if total_news > 0:
+        save_to_excel()  # 백업용 Excel 파일 생성
+        print("✅ 뉴스 수집 및 저장 완료!")
+    else:
+        print("❌ 뉴스 수집 실패!")

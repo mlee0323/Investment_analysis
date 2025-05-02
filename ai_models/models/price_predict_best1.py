@@ -24,6 +24,7 @@ import yfinance as yf
 import requests
 from bs4 import BeautifulSoup
 import logging
+from ai_models.database.db_config import execute_query, execute_values_query, execute_transaction
 
 # TensorFlow 로깅 설정
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # 0=all, 1=no info, 2=no warnings, 3=no errors
@@ -76,6 +77,93 @@ random.seed(SEED)
 
 # 배치 크기 증가 (GPU 메모리에 맞게 조정)
 BATCH_SIZE = 128  # 32에서 128로 증가
+
+def create_predictions_table():
+    """예측 결과를 저장할 테이블 생성"""
+    queries = [
+        ("""
+        CREATE TABLE IF NOT EXISTS price_predictions (
+            id SERIAL PRIMARY KEY,
+            stock_code VARCHAR(10) NOT NULL,
+            stock_name VARCHAR(50) NOT NULL,
+            prediction_date TIMESTAMPTZ NOT NULL,
+            target_date TIMESTAMPTZ NOT NULL,
+            predicted_price DECIMAL(10,2) NOT NULL,
+            actual_price DECIMAL(10,2),
+            prediction_error DECIMAL(10,2),
+            created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        );
+        """, None),
+        ("CREATE INDEX IF NOT EXISTS idx_price_predictions_date ON price_predictions (prediction_date, target_date);", None),
+        ("CREATE INDEX IF NOT EXISTS idx_price_predictions_stock ON price_predictions (stock_code);", None)
+    ]
+    execute_transaction(queries)
+    print("Price predictions table created successfully!")
+
+def load_data_from_db():
+    """데이터베이스에서 데이터 로드"""
+    print("Loading stock data...")
+    try:
+        # 주가 데이터 로드
+        query = """
+        SELECT 
+            time, stock_code, stock_name,
+            open_price, high_price, low_price, close_price,
+            volume, market_cap, foreign_holding, foreign_holding_ratio
+        FROM stock_prices
+        WHERE stock_name = 'LG전자'
+        ORDER BY time;
+        """
+        stock_data = pd.DataFrame(execute_query(query))
+        
+        # 감성 데이터 로드
+        query = """
+        SELECT 
+            pub_date, title,
+            finbert_positive, finbert_negative, finbert_neutral,
+            finbert_sentiment
+        FROM news_sentiment
+        ORDER BY pub_date;
+        """
+        sentiment_data = pd.DataFrame(execute_query(query))
+        
+        # 경제지표 데이터 로드
+        query = """
+        SELECT 
+            time,
+            treasury_10y, dollar_index, usd_krw, korean_bond_10y
+        FROM economic_indicators
+        ORDER BY time;
+        """
+        economic_data = pd.DataFrame(execute_query(query))
+        
+        print("Stock data shape:", stock_data.shape)
+        print("Sentiment data shape:", sentiment_data.shape)
+        print("Economic data shape:", economic_data.shape)
+        
+        return stock_data, sentiment_data, economic_data
+        
+    except Exception as e:
+        print(f"데이터 로드 중 오류 발생: {e}")
+        raise
+
+def save_prediction(stock_code, stock_name, prediction_date, target_date, predicted_price, actual_price=None):
+    """예측 결과를 데이터베이스에 저장"""
+    prediction_error = None
+    if actual_price is not None:
+        prediction_error = predicted_price - actual_price
+    
+    query = """
+    INSERT INTO price_predictions (
+        stock_code, stock_name, prediction_date, target_date,
+        predicted_price, actual_price, prediction_error
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    params = (
+        stock_code, stock_name, prediction_date, target_date,
+        predicted_price, actual_price, prediction_error
+    )
+    execute_query(query, params, fetch=False)
 
 # 1. 데이터 로드 및 전처리
 print("Loading stock data...")
@@ -974,6 +1062,42 @@ try:
     print(f"RMSE: {rmse:.2f}")
     print(f"MAPE: {mape:.2f}%")
 
+    # 예측 결과 저장
+    for i, (date, pred, actual) in enumerate(zip(target_dates, last_prediction, target_prices)):
+        save_prediction(
+            stock_code='066570',  # LG전자 종목코드
+            stock_name='LG전자',
+            prediction_date=datetime.now(),
+            target_date=datetime.strptime(date, '%Y-%m-%d'),
+            predicted_price=pred,
+            actual_price=actual
+        )
+    
+    print("✅ 예측 결과가 데이터베이스에 저장되었습니다.")
+
 except Exception as e:
     print(f"예측 결과 분석 중 오류 발생: {e}")
     raise
+
+if __name__ == "__main__":
+    print("📢 주가 예측 모델 학습을 시작합니다...")
+    create_predictions_table()
+    
+    # 데이터 로드
+    stock_data, sentiment_data, economic_data = load_data_from_db()
+    
+    # 데이터 전처리 및 모델 학습
+    # ... (기존 코드 유지) ...
+    
+    # 예측 결과 저장
+    for i, (date, pred, actual) in enumerate(zip(target_dates, last_prediction, target_prices)):
+        save_prediction(
+            stock_code='066570',  # LG전자 종목코드
+            stock_name='LG전자',
+            prediction_date=datetime.now(),
+            target_date=datetime.strptime(date, '%Y-%m-%d'),
+            predicted_price=pred,
+            actual_price=actual
+        )
+    
+    print("✅ 예측 결과가 데이터베이스에 저장되었습니다.")
